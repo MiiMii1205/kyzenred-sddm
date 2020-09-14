@@ -1,0 +1,13 @@
+[SddmGreeterTheme]
+Name=Kyzenred
+Author=oracleforms11g
+License=CC-BY-SA
+Type=sddm-theme
+Version=0.1
+Screenshot=preview.png
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=translations
+Email=BoldJe1.work@gmail.com
+Theme-Id=kyzenred
+Theme-API=2.0
