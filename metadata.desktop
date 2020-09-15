@@ -1,8 +1,8 @@
 [SddmGreeterTheme]
 Name=Kyzenred
 Author=oracleforms11g
-Description=A full KDE theme based on gamer aesthetics and modern minimalism
-License=CC-BY-SA
+Description=A full KDE theme based on gamer aesthetics and modern minimalism (sddm greeter)
+License=CC-BY
 Type=sddm-theme
 Version=0.1
 Screenshot=preview.png
