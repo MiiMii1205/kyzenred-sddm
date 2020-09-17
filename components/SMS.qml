@@ -23,16 +23,24 @@ Item {
     property bool showUserList: true
 
     property alias userList: user_list_view
-    property int fontSize: prompts.height * config.fontSize / 810
+
+    property font font: root.kyzenFont
+
+    property alias fontSize: sms_root.font.pointSize
+    property string fontFamily:  sms_root.font.family
+
+    property real promptsPointHeight: (prompts.height * 1 / 0.75) 
+    property real usernameHeight: { currentUser === null ? 0 : user_list_view.currentItem.usernameLabelHeight }
+    fontSize: Math.max(promptsPointHeight * root.kyzenFont.pointSize / 810, 0.0001) 
 
     default property alias _children: innerLayout.children
 
     UserList {
         id:  user_list_view
-        visible: parent.showUserList
+        visible: sms_root.showUserList
         model: userModel
-        fontSize: parent.fontSize
-        anchors.fill: parent
+        font: sms_root.font
+        anchors.fill: sms_root
 
         anchors.topMargin: login_tile.height+notificationsLabel.height
     }
@@ -40,20 +48,22 @@ Item {
     ColumnLayout {
         id: prompts
         anchors {
-           fill: parent
+           fill: sms_root
            margins: 7
         }
 
+        // spacing:  units.largeSpacing
 
         PlasmaComponents.Label {
             id: login_tile
-            font.pointSize: prompts.height * 64 / 810
+            font.pointSize: promptsPointHeight * ( root.kyzenFont.pointSize * 64 / 10 ) / 810
+            font.family: sms_root.font.family 
+            font.weight: Font.Black
             Layout.maximumWidth: prompts.width
-            Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            font.weight: Font.Black
             color: root.kyzenButtonHoverColor
             text:sddm.hostName || "KYZEN"
             KyzenColorFade on color {}
@@ -61,41 +71,40 @@ Item {
 
         PlasmaComponents.Label {
             id: notificationsLabel
-            font.pointSize: fontSize + 2
+            font.pointSize: sms_root.font.pointSize + 2
+            font.family: sms_root.font.family 
             Layout.maximumWidth: prompts.width
-            Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             color: root.kyzenButtonHoverColor
-            text: "KYZEN"
+            text: ""
+            visible: notificationsLabel.text != ""
             KyzenColorFade on color {}
-        }
+        } 
 
         ColumnLayout {
-            Layout.minimumHeight: implicitHeight
-            Layout.maximumHeight: prompts.height
+            Layout.maximumHeight: implicitHeight
+            // Layout.maximumHeight: implicitHeight
             Layout.maximumWidth: prompts.width
-            Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
-            spacing:  units.largeSpacing
-            
             Item {
                 id: userbox
-                Layout.minimumHeight: ((login_container.calculatedWidth * 128) / 480) + notificationsLabel.height + units.largeSpacing
-                Layout.maximumHeight: units.gridUnit * 10
+                Layout.minimumHeight: ((login_container.calculatedWidth * 128) / 480) + usernameHeight +  units.largeSpacing
+                Layout.maximumHeight: (login_container.calculatedHeight /2)
                 Layout.fillWidth: true
             }
             
             ColumnLayout {
                 id: innerLayout
-                Layout.alignment: Qt.AlignHCenter
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 Layout.fillWidth: true
+                Layout.fillHeight: true
+                spacing:0
             }
 
-            Item {
-                Layout.fillHeight: true
-            }
         }
 
         Item {
@@ -109,6 +118,7 @@ Item {
             arrowSvgPath: "m 7.0006681,9.0009671 -3.0723263,-3.072326 0.928234,-0.928234 h 4.2882229 l 0.9282333,0.928234 z"
             svgWidth: 14.001
             svgHeight: 14.001
+            font: sms_root.font
 
             model: sessionModel
             currentIndex: sessionModel.lastIndex
@@ -121,6 +131,7 @@ Item {
             arrowSvgPath: "m 7.0006681,9.0009671 -3.0723263,-3.072326 0.928234,-0.928234 h 4.2882229 l 0.9282333,0.928234 z"
             svgWidth: 14.001
             svgHeight: 14.001
+            font: sms_root.font
 
             model: keyboard.layouts
             currentIndex: keyboard.currentLayout

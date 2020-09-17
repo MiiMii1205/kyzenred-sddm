@@ -12,9 +12,9 @@ import QtQuick.Controls 2.0
 TextField { 
     id: field
 
-    font.family: config.font || "Noto Sans"
-
-    passwordCharacter: "●" 
+    font: root.kyzenFont
+    
+    passwordCharacter: root.kyzenPasswordFieldCharacter
     property string bottomText
     color: root.kyzenTextColor
     placeholderTextColor: root.kyzenTextColor
@@ -22,6 +22,8 @@ TextField {
     selectedTextColor: root.kyzenHighlightTextColor
     selectByMouse: true
     property real controlOffsets: 0
+    opacity: field.enabled ? 1 : 0.5
+    KyzenPropertyFade on opacity {}
 
     KyzenColorFade on selectedTextColor {}
     KyzenColorFade on selectionColor {}
@@ -38,12 +40,12 @@ TextField {
     rightInset: 0
     bottomInset: bottom_text_label.height
     
+    
     background: Item {
         id:field_background
         implicitHeight: Math.max(metrics.height * 1.6,
                         metrics.height + 1 + 1)
-        implicitWidth: theme.mSize(theme.defaultFont).width * 12
-        opacity: field.enabled ? 1 : 0.6
+        implicitWidth: theme.mSize(field.font).width * 12
 
         anchors.fill: parent
 
@@ -148,6 +150,7 @@ TextField {
             id:bottom_text_label
             text: field.bottomText
             font.pointSize: field.font.pointSize * 0.75
+            font.family: field.font.family
             color: field_background.lineColor
             opacity:field_background.lineOpacity
             elide: Text.ElideRight

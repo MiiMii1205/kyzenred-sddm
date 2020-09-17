@@ -30,18 +30,47 @@ PlasmaCore.ColorScope {
     property double baseAnimationTime : units.longDuration*2
     property double smallAnimationTime : units.shortDuration
 
-    property color kyzenButtonHoverColor: theme.buttonHoverColor
-    property color kyzenButtonFocusColor: theme.buttonFocusColor
-    property color kyzenButtonTextColor: theme.buttonTextColor
-    property color kyzenButtonBackgroundColor: theme.buttonBackgroundColor
-    property color kyzenBackgroundColor: theme.backgroundColor
-    property color kyzenHighlightColor: theme.highlightColor
-    property color kyzenHighlightTextColor: theme.highlightedTextColor
-    property color kyzenTextColor: theme.textColor
-    property color kyzenViewBackgroundColor: theme.viewBackgroundColor
-    property color userBackgroundColor: theme.backgroundColor;
+    property font kyzenFont
+    
+    kyzenFont.family: config.font || "Noto Sans" || theme.defaultFont.family 
+    kyzenFont.pointSize: config.fontSize || 10 || theme.defaultFont.pointSize
+    kyzenFont.bold: theme.defaultFont.bold
+    kyzenFont.italic: theme.defaultFont.italic
+    kyzenFont.underline: theme.defaultFont.underline
+    kyzenFont.weight: theme.defaultFont.weight
+    kyzenFont.overline: theme.defaultFont.overline
+    kyzenFont.strikeout: theme.defaultFont.strikeout
+    kyzenFont.capitalization: theme.defaultFont.capitalization
+    kyzenFont.letterSpacing: theme.defaultFont.letterSpacing
+    kyzenFont.wordSpacing: theme.defaultFont.wordSpacing
+    kyzenFont.kerning: theme.defaultFont.kerning
+    kyzenFont.preferShaping: theme.defaultFont.preferShaping
+    kyzenFont.hintingPreference: theme.defaultFont.hintingPreference
+
+    property color kyzenDefaultButtonHoverColor: "#942228" || theme.buttonHoverColor
+    property color kyzenDefaultButtonFocusColor: "#c91e3c" || theme.buttonFocusColor
+    property color kyzenDefaultButtonTextColor: "#e9f5f3" || theme.buttonTextColor
+    property color kyzenDefaultButtonBackgroundColor: "#1c0408" || theme.buttonBackgroundColor
+    property color kyzenDefaultBackgroundColor: "#031b16" || theme.backgroundColor
+    property color kyzenDefaultHighlightColor: "#e51b42" || theme.highlightColor
+    property color kyzenDefaultHighlightTextColor: "#001b16" || theme.highlightedTextColor
+    property color kyzenDefaultTextColor: "#fae9e8" || theme.textColor
+    property color kyzenDefaultViewBackgroundColor: "##010d0a" || theme.viewBackgroundColor
+
+    property color kyzenButtonHoverColor: root.kyzenDefaultButtonHoverColor
+    property color kyzenButtonFocusColor: root.kyzenDefaultButtonFocusColor
+    property color kyzenButtonTextColor: root.kyzenDefaultButtonTextColor
+    property color kyzenButtonBackgroundColor: root.kyzenDefaultButtonBackgroundColor
+    property color kyzenBackgroundColor: root.kyzenDefaultBackgroundColor
+    property color kyzenHighlightColor: root.kyzenDefaultHighlightColor
+    property color kyzenHighlightTextColor: root.kyzenDefaultHighlightTextColor
+    property color kyzenTextColor: root.kyzenDefaultTextColor
+    property color kyzenViewBackgroundColor: root.kyzenDefaultViewBackgroundColor
+
+    property color userBackgroundColor: theme.backgroundColor
 
     property string userBackgroundPath: "";
+    property string kyzenPasswordFieldCharacter: config.passwordFieldCharacter == "" ? "◆" : config.passwordFieldCharacter
 
     property bool useBlur: config.blur === "true"
     property bool useDefaultWallpaper: config.useDefaultWallpaper === "true"
@@ -255,6 +284,7 @@ PlasmaCore.ColorScope {
                     id:backClock
                     basePointSize:884
                     visible: root.softwareRendering
+                    font: root.kyzenFont
                     opacity:1
                 }
 
@@ -285,11 +315,12 @@ PlasmaCore.ColorScope {
 
             KyzenClock {
                 id:clock
-                basePointSize:48
+                basePointSize: font.pointSize * 48 / 10
 
                 anchors.bottom: login_container.top
                 anchors.horizontalCenter: login_container.horizontalCenter
                 width: root.width
+                font: root.kyzenFont
                 
                 visible: root.softwareRendering
             }
@@ -312,10 +343,14 @@ PlasmaCore.ColorScope {
             Item {
                 id: login_container
 
-                property double calculatedWidth: root.height/3
-                property double calculatedHeight: calculatedWidth * 1.618033988749895
-                property double kyzenBracketMargin: (calculatedWidth * 55.704) / 384
-                property double heightWeight: 0
+                property real calculatedWidth: root.height/3
+                property real calculatedHeight: calculatedWidth * 1.618033988749895
+                property real kyzenBracketMargin: (calculatedWidth * 55.704) / 384
+                property real heightWeight: 0
+                property real pointHeight : (height*1/0.75)
+
+                opacity: (login_container.enabled ? 1 : 0.5)
+                KyzenPropertyFade on opacity {}
 
                 anchors {
                     // margins: parent.kyzenBracketMargin
@@ -330,6 +365,7 @@ PlasmaCore.ColorScope {
 
                 // Golden ratio
                 height: calculatedHeight * heightWeight
+
                 
 
                 // Item{
@@ -446,9 +482,8 @@ PlasmaCore.ColorScope {
                         initialItem : LoginPrompt {
                             id: userListComponent
                             userListModel: userModel
-
-                            usernameFontSize: Math.max(config.fontSize, theme.defaultFont.pointSize)
-
+                            font: root.kyzenFont
+                            
                             bottomTextMessage: {
                                 var text = ""
                                 if (keystateSource.data["Caps Lock"]["Locked"]) {
@@ -664,8 +699,9 @@ PlasmaCore.ColorScope {
                     id: userPromptComponent
                     LoginPrompt {
                         showUsernamePrompt: true
+                        hideUsername:true
 
-                        usernameFontSize: config.fontSize
+                        font: root.kyzenFont
 
                         bottomTextMessage: {
                             var text = ""
@@ -719,7 +755,7 @@ PlasmaCore.ColorScope {
                         iconSvgPath: "M 14.01954,-3.8299561e-7 H 18.6875 V 2.0702996 l -2.83789,2.8379 h 2.83789 v 1.0722 l -0.92773,0.9278 H 13.0918 v -2.0703 l 2.83789,-2.8379 H 13.0918 V 0.92769962 Z M 0.92773,3.2733996 h 4.66798 v 2.0703 l -2.8379,2.8379 h 2.8379 v 1.0723 L 4.66797,10.1816 H 0 V 8.1112996 l 2.83789,-2.8379 H 0 v -1.0723 z M 10.7461,11.455 h 4.66797 v 2.0704 l -2.83789,2.8378 h 2.83789 v 1.0723 l -0.92774,0.9277 H 9.81836 V 16.2929 L 12.65625,13.455 H 9.81836 v -1.0722 z"
                         svgWidth:18.688
                         svgHeight:18.363
-
+                        font: root.kyzenFont
                  
                         onClicked: sddm.suspend()
                         enabled: sddm.canSuspend
@@ -737,6 +773,7 @@ PlasmaCore.ColorScope {
                         onClicked: sddm.reboot()
                         enabled: sddm.canReboot
                         implicitWidth: implicitHeight
+                        font: root.kyzenFont
 
                         KyzenToolTip {
                             text: i18nd("plasma_lookandfeel_org.kde.lookandfeel","Restart")
@@ -750,6 +787,7 @@ PlasmaCore.ColorScope {
                         onClicked: sddm.powerOff()
                         enabled: sddm.canPowerOff
                         implicitWidth: implicitHeight
+                        font: root.kyzenFont
 
                         KyzenToolTip {
                             text: i18nd("plasma_lookandfeel_org.kde.lookandfeel","Shut Down")
@@ -762,6 +800,7 @@ PlasmaCore.ColorScope {
                         // "M 3.11718,1.9066575e-7 H 4.1875 V 14.000001 h 1.37695 l 0.8105497,0.8125 L 3.1875,18.000001 0,14.812501 l 0.8125,-0.8125 h 1.375 L 2.1895,0.92770019 Z m 7.44532,0 L 13.75,3.1874999 l -0.81055,0.8125 H 11.5625 V 17.072301 l -0.92774,0.9277 H 9.5624997 V 3.9999999 h -1.375 l -0.8125,-0.8125 z"
                         svgWidth:  login_stack.userPromptComponentActive ?  9 : 21.062
                         svgHeight: login_stack.userPromptComponentActive ? 8 : 24
+                        font: root.kyzenFont
                         onClicked: {
                             if(login_stack.userPromptComponentActive) {
                                 login_stack.pop()
@@ -810,19 +849,45 @@ PlasmaCore.ColorScope {
         running: true
     }
 
+    SequentialAnimation {
+        id: close_greeter
+        ParallelAnimation {
+            NumberAnimation {
+            property: "heightWeight"
+            target: login_container
+            from:1
+            to: 0
+            duration: root.baseAnimationTime
+            easing.type: Easing.InOutQuint
+            easing.overshoot: 0
+        }
+            NumberAnimation {
+                property: "opacity"
+                target: loginScreen
+                from:1
+                to: 0
+                duration: root.baseAnimationTime
+                easing.type: Easing.InOutQuint
+                easing.overshoot: 0
+            }
+        }
+        
+
+        running: false
+    }
+
+
     Connections {
         target: sddm
         onLoginFailed: {
             notificationMessage = i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Login Failed")
-            login_stack.enabled = true
-            action_layout.enabled = true
+            login_container.enabled = action_layout.enabled = true
         }
         onLoginSucceeded: {
             //note SDDM will kill the greeter at some random point after this
             //there is no certainty any transition will finish, it depends on the time it
             //takes to complete the init
-            mainStack.opacity = 0
-            footer.opacity = 0
+            close_greeter.running = true
         }
     }
     

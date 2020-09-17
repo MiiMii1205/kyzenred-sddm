@@ -9,13 +9,16 @@ ColumnLayout {
     spacing: 0 
 
     property real basePointSize : 48
+    property font font
+    
 
     PlasmaComponents.Label  {
         KyzenColorFade on color {}
         text: Qt.formatTime(timeSource.data["Local"]["DateTime"])
         color: root.kyzenButtonHoverColor
-        font.pointSize: login_container.height * basePointSize / 810
+        font.pointSize: login_container.pointHeight * basePointSize / 810
         font.weight: Font.Black
+        font.family: parent.font.family
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignBottom
@@ -26,8 +29,9 @@ ColumnLayout {
         KyzenColorFade on color {}  
         text: Qt.formatDate(timeSource.data["Local"]["DateTime"], Qt.DefaultLocaleLongDate)
         color: root.kyzenButtonHoverColor
-        font.pointSize: login_container.height * (basePointSize/2) / 810
+        font.pointSize: login_container.pointHeight * (basePointSize/2) / 810
         Layout.alignment: Qt.AlignHCenter
+        font.family: parent.font.family
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignBottom
         Layout.fillWidth: true

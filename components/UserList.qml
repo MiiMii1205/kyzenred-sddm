@@ -7,10 +7,10 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 ListView {
     id: view
     readonly property string selectedUser: currentItem ? currentItem.userName : ""
-    readonly property int userItemWidth: inner_login_box.width/2 + inner_login_box.width/4 
-    readonly property int userItemHeight: userbox.height
+    readonly property real userItemWidth: inner_login_box.width/2 + inner_login_box.width/4 
+    readonly property real userItemHeight: userbox.height
 
-    property int fontSize: config.fontSize
+    property font font: root.kyzenFont
     activeFocusOnTab : true
     
     implicitHeight: userItemHeight
@@ -19,16 +19,12 @@ ListView {
     displayMarginEnd:displayMarginBeginning
     
     anchors.centerIn: parent
-    
-    /*
-     * Signals that a user was explicitly selected
-     */
+
     signal userSelected;
 
     orientation: ListView.Horizontal
     highlightRangeMode: ListView.StrictlyEnforceRange
 
-    //centre align selected item (which implicitly centre aligns the rest
     preferredHighlightBegin: width/2 - userItemWidth/2
     preferredHighlightEnd: preferredHighlightBegin
 
@@ -45,7 +41,6 @@ ListView {
             if (!model.session) {
                 return i18ndc("plasma_lookandfeel_org.kde.lookandfeel", "Nobody logged in on that session", "Unused")
             }
-
 
             var location = ""
             if (model.isTty) {
@@ -73,6 +68,8 @@ ListView {
         constrainText: ListView.view.count > 1
 
         isCurrent: ListView.isCurrentItem
+
+        font: ListView.view.font
 
         onClicked: {
             ListView.view.currentIndex = index;

@@ -20,11 +20,13 @@ Item {
     property string backgroundId
     property string homeDir
     property bool constrainText: true
-    property alias nameFontSize: usernameDelegate.font.pointSize
-    property int fontSize: config.fontSize
+    property bool hideUsername: false
+    
+    property font font: root.kyzenFont
     signal clicked()
 
     property real faceSize: (login_container.calculatedWidth * 128) / 480
+    property alias usernameLabelHeight: usernameDelegate.height
 
     opacity: isCurrent ? 1.0 : 0.5
 
@@ -135,21 +137,27 @@ Item {
 
     PlasmaComponents.Label {
         id: usernameDelegate
-        font.pointSize: Math.max(fontSize + 2,theme.defaultFont.pointSize + 2)
+        font.pointSize:wrapper.font.pointSize + 2
+        font.family: wrapper.font.family
+        
         // anchors.centerIn: parent
 
         anchors.top: imageSource.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         //  anchors.topMargin: faceSize + units.largeSpacing + login_tile.height + notificationsLabel.height
 
-        height: implicitHeight // work around stupid bug in Plasma Components that sets the height
+
+        height: Math.floor(Math.max(theme.mSize(font).height, implicitHeight))
+        // height: implicitHeight  // work around stupid bug in Plasma Components that sets the height
         width: parent.width
         text: wrapper.name
         color: wrapper.activeFocus ? root.kyzenButtonFocusColor : root.kyzenTextColor
         style: Text.Normal
         styleColor: PlasmaCore.ColorScope.backgroundColor //no outline, doesn't matter
         elide: Text.ElideRight
+        wrapMode:Text.WordWrap 
         horizontalAlignment: Text.AlignHCenter
+        maximumLineCount:2
         KyzenColorFade on color {}
     }
 

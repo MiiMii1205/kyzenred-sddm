@@ -12,6 +12,7 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 
 Menu {
     id: menu
+    font: root.kyzenFont
 
     background: KyzenBorderedFrame {
         buttonBackdropColor: Qt.rgba(root.kyzenButtonBackgroundColor.r,root.kyzenButtonBackgroundColor.g,root.kyzenButtonBackgroundColor.b,0)

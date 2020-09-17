@@ -10,13 +10,15 @@ Item {
     anchors.fill: parent
     
     property real basePointSize : 48
+    property font font
 
     Label {
         KyzenColorFade on color {}
         text: Qt.formatTime(timeSource.data["Local"]["DateTime"])
         color: root.kyzenButtonHoverColor
-        font.pointSize: login_container.height * basePointSize / 810
+        font.pointSize: login_container.pointHeight * basePointSize / 810
         font.weight: "Black"
+        font.family: parent.font.family
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -31,8 +33,9 @@ Item {
         KyzenColorFade on color {}
         text: Qt.formatDate(timeSource.data["Local"]["DateTime"], Qt.DefaultLocaleLongDate)
         color: root.kyzenButtonHoverColor
-        font.pointSize: login_container.height * basePointSize / 810
+        font.pointSize: login_container.pointHeight * basePointSize / 810
         font.weight: "Black"
+        font.family: parent.font.family
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

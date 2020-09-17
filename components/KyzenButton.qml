@@ -14,15 +14,16 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 Button { 
     id: button
     hoverEnabled: true
-
+    font: root.kyzenFont
     padding: 7
+
+    opacity: (button.enabled ? 1 : 0.5)
+    KyzenPropertyFade on opacity {}
 
     contentItem: RowLayout {
             
-            opacity: button.enabled ? 1 : 0.5
             spacing: units.smallSpacing
 
-            KyzenPropertyFade on opacity {}  
             property real minimumWidth: implicitWidth + button.letfPadding + button.rightPadding
             onMinimumWidthChanged: {
                 if (button.minimumWidth !== undefined) {
@@ -72,9 +73,6 @@ Button {
 
         background: KyzenBorderedFrame {
             flatButtonBackgoundOpacity: 1
-
-            KyzenPropertyFade on opacity {}  
-            opacity: button.enabled ? 1 : 0.5
 
             implicitHeight: Math.floor(Math.max(theme.mSize(button.font).height*1.6, contentItem.minimumHeight))
 

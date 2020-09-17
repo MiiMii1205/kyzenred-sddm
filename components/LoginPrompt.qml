@@ -16,12 +16,11 @@ SMS {
     property Item mainPasswordBox: passwordBox
     
     property bool showUsernamePrompt: !showUserList
-    property int usernameFontSize: fontSize
+
     property string usernameFontColor
     property string lastUserName
     property bool loginScreenUiVisible: false
-    property bool passwordFieldOutlined: config.PasswordFieldOutlined == "true"
-    property bool hidePasswordRevealIcon: config.HidePasswordRevealIcon == "false"
+    property bool hidePasswordRevealIcon: config.hidePasswordRevealIcon == "false"
 
     property alias bottomTextMessage: passwordBox.bottomText
 
@@ -40,8 +39,7 @@ SMS {
         var username = showUsernamePrompt ? userNameInput.text : userList.selectedUser
         var password = passwordBox.text
 
-        login_stack.enabled = false
-        action_layout.enabled = false
+        action_layout.enabled = login_container.enabled = false
 
         loginButton.forceActiveFocus();
         loginRequest(username, password);
@@ -51,15 +49,13 @@ SMS {
         id: userNameInput
         Layout.fillWidth: true
         Layout.minimumHeight: 32
-        implicitHeight: login_prompt_root.usernameFontSize * 2.85 + (1 + 1)
-        font.pointSize: login_prompt_root.usernameFontSize
-        font.family: config.font || "Noto Sans"
+        implicitHeight: login_prompt_root.font.pointSize * 2.85 + (topPadding + bottomPadding)
+        font: login_prompt_root.font
         text: lastUserName
         visible: showUsernamePrompt
         focus: showUsernamePrompt && !lastUserName
         placeholderText: i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Username")
         Layout.bottomMargin:  units.largeSpacing
-
 
         onAccepted:
             if (login_root.uiVisible) {
@@ -78,13 +74,13 @@ SMS {
 
             property bool showPassword: false
             property bool clearButtonShown: true
-            property bool showPasswordButtonShown: true
+            property bool showPasswordButtonShown: hidePasswordRevealIcon
             readonly property bool __effectiveRevealPasswordButtonShown:  KAuthorized.authorize("lineedit_reveal_password")
 
-            implicitHeight: login_prompt_root.usernameFontSize * 2.85 + (topPadding + bottomPadding)
-            font.pointSize: login_prompt_root.usernameFontSize
-            font.family: config.font || "Noto Sans"
-            placeholderText: config.PasswordFieldPlaceholderText == "Password" ? i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Password") : config.PasswordFieldPlaceholderText
+            implicitHeight: login_prompt_root.font.pointSize * 2.85 + (topPadding + bottomPadding)
+            font: login_prompt_root.font
+
+            placeholderText: config.passwordFieldPlaceholderText == "Password" ? i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Password") : config.passwordFieldPlaceholderText
             focus: !login_prompt_root.showUsernamePrompt || lastUserName
             echoMode: showPassword ? TextInput.Normal : TextInput.Password 
 
@@ -95,7 +91,7 @@ SMS {
                 }
             }
 
-            passwordCharacter: config.PasswordFieldCharacter == "" ? "●" : config.PasswordFieldCharacter
+            passwordCharacter: root.kyzenPasswordFieldCharacter 
   
             Keys.onEscapePressed: {
                 login_stack.currentItem.forceActiveFocus();
@@ -169,6 +165,7 @@ SMS {
                     iconSvgPath: "m 2.0023585,2.0001755 h 2.1083779 l 3.8892652,3.890512 3.8905114,-3.890512 h 2.107129 v 2.158377 l -3.864889,3.864877 3.864889,3.8648915 v 2.111503 H 11.84364 L 8.0000001,10.156187 4.1563635,13.999824 h -2.154005 l 3e-6,-2.111503 3.8648907,-3.8648915 -3.8648937,-3.818798 z"
                     svgWidth: 16.0
                     svgHeight: 16.0
+                    font: login_prompt_root.font
                     
                     onClicked: {
                         passwordBox.text = ""; 
@@ -204,6 +201,7 @@ SMS {
             implicitHeight: passwordBox.height
             implicitWidth: implicitHeight
             onClicked: startLogin();
+            font: login_prompt_root.font
         }
 
     }

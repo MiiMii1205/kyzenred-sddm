@@ -20,12 +20,13 @@ KyzenButton {
 
     property real reqiredSvgWidth: units.iconSizes.small
 
+    opacity: (button.enabled ? 1 : 0.5)
+    KyzenPropertyFade on opacity {}
+
     contentItem: RowLayout {
             
-            opacity: button.enabled ? 1 : 0.5
             spacing: units.smallSpacing
 
-            KyzenPropertyFade on opacity {}  
             property real minimumWidth: implicitWidth + button.letfPadding + button.rightPadding
             onMinimumWidthChanged: {
                 if (button.minimumWidth !== undefined) {

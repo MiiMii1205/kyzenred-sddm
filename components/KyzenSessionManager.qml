@@ -22,13 +22,19 @@ ComboBox {
 
     visible: count > 1
 
+    opacity: (button.enabled ? 1 : 0.5)
+    KyzenPropertyFade on opacity {}
+
     padding:7
+
+    font: root.kyzenFont
 
     delegate: KyzenMenuItem {
         id: wrapper
         width: button.width
         height: button.height
         text: model.name
+        font: button.font
         highlighted: button.highlightedIndex === index || wrapper.hovered
     }
 
@@ -36,6 +42,7 @@ ComboBox {
         property int sessionIndex: model.lastIndex
         y: sessionIndex * -button.height
         width: button.width
+        font: button.font
         implicitHeight: contentItem.implicitHeight
         transformOrigin: Item.Center
         opacity: 0
@@ -82,13 +89,13 @@ ComboBox {
 
     }
 
-    implicitHeight: Math.floor(Math.max(theme.mSize(font).height*1.6, contentItem.minimumHeight))
+    implicitHeight: Math.floor(Math.max(theme.mSize(button.font).height*1.6, contentItem.minimumHeight))
  
     implicitWidth: {
         if (displayText.length == 0) {
             return height;
         } else {
-            return  theme.mSize(font).width*12
+            return  theme.mSize(button.font).width*12
         }
     }
 
@@ -109,7 +116,7 @@ ComboBox {
             }   
         }
 
-        opacity: (1 - button.popup.opacity) * (button.enabled ? 1 : 0.5)
+        opacity: (1 - button.popup.opacity)
         id: label
         text: button.displayText
         font: button.font
@@ -133,7 +140,7 @@ ComboBox {
         id: arrow
         width: svgWidth
         height: svgHeight
-        opacity: 1 - button.popup.opacity 
+        opacity: label.opacity 
 
         transformOrigin: Item.Center
 
@@ -146,7 +153,7 @@ ComboBox {
         scale:(16 / height)
 
         ShapePath {
-            fillColor: button.contentItem.color
+            fillColor: label.color
             strokeWidth: -1
             startX: 128; startY: 128
             PathSvg {
@@ -161,13 +168,13 @@ ComboBox {
         // visible:!popup.visible
         opacity: 1 - button.popup.opacity 
 
-        implicitHeight: Math.floor(Math.max(theme.mSize(font).height*1.6, button.contentItem.minimumHeight))
+        implicitHeight: Math.floor(Math.max(theme.mSize(button.font).height*1.6, button.contentItem.minimumHeight))
 
         implicitWidth: {
             if (currentText.length == 0) {
                 height;
             } else {
-                theme.mSize(font).width*12
+                theme.mSize(button.font).width*12
             }
         }
 

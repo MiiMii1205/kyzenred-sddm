@@ -19,9 +19,13 @@ ComboBox {
     textRole: "longName"
     valueRole: "shortName"
     hoverEnabled: true
+    font: root.kyzenFont
     displayText: i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Keyboard Layout: %1", currentValue || currentText || "")
 
     visible: count > 1
+
+    opacity: (button.enabled ? 1 : 0.5)
+    KyzenPropertyFade on opacity {}
 
     currentIndex: keyboard.currentLayout
     onActivated: keyboard.currentLayout = button.currentIndex
@@ -33,6 +37,7 @@ ComboBox {
         width: button.width
         height: button.height
         text: modelData.longName
+        font: button.font
         // property string shortName: modelData.shortName
         highlighted: button.highlightedIndex === index || wrapper.hovered
     }
@@ -44,6 +49,7 @@ ComboBox {
         implicitHeight: contentItem.implicitHeight
         transformOrigin: Item.Center
         opacity: 0
+        font: button.font
 
         Component.onCompleted: currentIndex = Qt.binding(function() {return keyboard.currentLayout});
 
@@ -116,7 +122,7 @@ ComboBox {
             }   
         }
 
-        opacity: (1 - button.popup.opacity) * (button.enabled ? 1 : 0.5)
+        opacity: (1 - button.popup.opacity)
         id: label
         text: button.displayText
         font: button.font
@@ -140,7 +146,7 @@ ComboBox {
         id: arrow
         width: svgWidth
         height: svgHeight
-        opacity: 1 - button.popup.opacity 
+        opacity: label.opacity 
 
         transformOrigin: Item.Center
 
@@ -153,7 +159,7 @@ ComboBox {
         scale:(16 / height)
 
         ShapePath {
-            fillColor: button.contentItem.color
+            fillColor: label.color
             strokeWidth: -1
             startX: 128; startY: 128
             PathSvg {

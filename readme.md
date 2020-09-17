@@ -14,11 +14,11 @@ Just put this repository in `/usr/share/sddm/theme`. For the theme to work corre
 
 Here's a short list of every possible options found in the theme.config file:
 
-- `fontSize` : the size of the current font
-- `font` : the name of the used font
+- `fontSize` : the size of the current font (in points)
+- `font` : the name of the used font 
 - `blur` : toggles blurring
-- `PasswordFieldPlaceholderText` : a hardcoded placeholder text. For multilangual support I recomend kepping the original value
+- `passwordFieldPlaceholderText` : a hardcoded placeholder text. For multilingual support I recommend keeping the original value
 - `useDefaultWallpaper` : toggles the default background. If this is `false`, then if the current user doesn't have any desktop background set then a solid color background will be used instead of the default background
 - `background`: The default background to use. Will only show up if `useDefaultWallpaper` is set to `true`
-- `PasswordFieldCharacter` : a character that will be used to display password instead of the traditional median dot. 
+- `passwordFieldCharacter` : a character that will be used to display password instead of the traditional median dot. 
 

@@ -14,6 +14,9 @@ MenuItem {
     id: menuItem
     padding:7
     hoverEnabled: true
+
+    font: root.kyzenFont
+
     contentItem: PlasmaComponents.Label {
         opacity: menuItem.enabled ? 1 : 0.5
         id: label

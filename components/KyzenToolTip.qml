@@ -13,6 +13,7 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 ToolTip {
     id: tooltip
     visible: parent.hovered
+    font: root.kyzenFont
     opacity: 0
     delay:units.longDuration
 

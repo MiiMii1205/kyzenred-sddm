@@ -1,4 +1,3 @@
-
 function ini_dotSplit(str) {
     return str.replace(/\1/g, '\u0002LITERAL\\1LITERAL\u0002')
         .replace(/\\\./g, '\u0001')
@@ -7,8 +6,6 @@ function ini_dotSplit(str) {
                 .replace(/\2LITERAL\\1LITERAL\2/g, '\u0001');
         });
 }
-
-
 
 function ini_decode(str) {
     var out = {}
@@ -152,7 +149,7 @@ function encodeSVG(s) {
 function getFile(path, cb) {
     var doc = new XMLHttpRequest();
 
-    doc.onreadystatechange = function () {
+    doc.onreadystatechange = () => {
         if (doc.readyState == XMLHttpRequest.DONE) {
             cb(doc.responseText);
         }
@@ -178,15 +175,15 @@ function loadUserTheme() {
             root.kyzenHighlightTextColor = getKDEColor("Selection", "ForegroundNormal", ini)
             root.kyzenViewBackgroundColor = getKDEColor("View", "BackgroundNormal", ini)
         } else {
-            root.kyzenBackgroundColor = theme.backgroundColor
-            root.kyzenTextColor = theme.textColor
-            root.kyzenButtonFocusColor = theme.buttonFocusColor
-            root.kyzenButtonHoverColor = theme.buttonHoverColor
-            root.kyzenHighlightColor = theme.highlightColor
-            root.kyzenHighlightTextColor = theme.highlightedTextColor
-            root.kyzenButtonBackgroundColor = theme.buttonBackgroundColor
-            root.kyzenViewBackgroundColor = theme.viewBackgroundColor
-            root.kyzenButtonTextColor = theme.buttonTextColor
+            root.kyzenBackgroundColor = root.kyzenDefaultBackgroundColor;
+            root.kyzenTextColor = root.kyzenDefaultTextColor;
+            root.kyzenButtonFocusColor = root.kyzenDefaultButtonFocusColor;
+            root.kyzenButtonHoverColor = root.kyzenDefaultButtonHoverColor;
+            root.kyzenHighlightColor = root.kyzenDefaultHighlightColor;
+            root.kyzenHighlightTextColor = root.kyzenDefaultHighlightTextColor;
+            root.kyzenButtonBackgroundColor = root.kyzenDefaultButtonBackgroundColor;
+            root.kyzenViewBackgroundColor = root.kyzenDefaultViewBackgroundColor;
+            root.kyzenButtonTextColor = root.kyzenDefaultButtonTextColor;
         }
 
     })
@@ -194,19 +191,14 @@ function loadUserTheme() {
 }
 
 function updateCurrentUserState() {
-    // console.log(wrapper.homeDir, wrapper.isCurrent,wrapper.backgroundId,wrapper.userBackground, loginBackgroundList.users);
+    if(wrapper.userBackground) {
+        wrapper.userBackground.opacity=wrapper.isCurrent ? 1 : 0;
+
+    } 
     
-
-        if(wrapper.userBackground) {
-            wrapper.userBackground.opacity=wrapper.isCurrent ? 1 : 0;
-
-        } 
-        
-        if (wrapper.isCurrent) {
-            loadUserTheme();
-        }
-    
-
+    if (wrapper.isCurrent) {
+        loadUserTheme();
+    }
 }
 
 function findByUserName(list) {
@@ -287,13 +279,11 @@ function loadUsersWallpaper() {
             }
 
             let background = { bgId: username, component: userBackgroundComponent.createObject(loginBackgroundList, backgroundOpt) };
-            console.log(JSON.stringify(backgroundOpt));
             userBackgroundCache.append(background);
             wrapper.userBackground = background.component;
             loginBackgroundList.users+=`;${username}:${wrapper.m.index}`;
 
             updateCurrentUserState()
-
         })
 
     } else {
