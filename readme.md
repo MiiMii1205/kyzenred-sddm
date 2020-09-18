@@ -17,6 +17,8 @@ Here's a short list of every possible options found in the theme.config file:
 - `fontSize` : the size of the current font (in points)
 - `font` : the name of the used font 
 - `blur` : toggles blurring
+- `baseAnimationSpeed` : the base animation speed in milliseconds
+- `backgroundClock` : controls whenever or not the background clock is displayed
 - `passwordFieldPlaceholderText` : a hardcoded placeholder text. For multilingual support I recommend keeping the original value
 - `useDefaultWallpaper` : toggles the default background. If this is `false`, then if the current user doesn't have any desktop background set then a solid color background will be used instead of the default background
 - `background`: The default background to use. Will only show up if `useDefaultWallpaper` is set to `true`

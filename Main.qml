@@ -27,8 +27,8 @@ PlasmaCore.ColorScope {
     property string notificationMessage
     
     property double shadowOpacity : 0.05
-    property double baseAnimationTime : units.longDuration*2
-    property double smallAnimationTime : units.shortDuration
+    property double baseAnimationTime :  config.baseAnimationSpeed || units.longDuration*2
+    property double smallAnimationTime : config.baseAnimationSpeed * 0.75|| units.shortDuration
 
     property font kyzenFont
     
@@ -73,6 +73,7 @@ PlasmaCore.ColorScope {
     property string kyzenPasswordFieldCharacter: config.passwordFieldCharacter == "" ? "◆" : config.passwordFieldCharacter
 
     property bool useBlur: config.blur === "true"
+    property bool useBigClock: config.backgroundClock === "true"
     property bool useDefaultWallpaper: config.useDefaultWallpaper === "true"
     property string defaultWallpaper: config.background || ""
 
@@ -283,7 +284,7 @@ PlasmaCore.ColorScope {
                 KyzenBackClock {
                     id:backClock
                     basePointSize:884
-                    visible: root.softwareRendering
+                    visible: !backClockShadow.visible && root.useBigClock
                     font: root.kyzenFont
                     opacity:1
                 }
@@ -292,7 +293,7 @@ PlasmaCore.ColorScope {
                     id: backClockShadow
                     anchors.fill: backClock
                     source: backClock
-                    visible: !root.softwareRendering 
+                    visible: !root.softwareRendering && root.useBigClock
                     horizontalOffset: 0
                     verticalOffset: loginScreen.height * ( (backClock.basePointSize * 1.333) * 8 / 64) / 1080
                     radius: 3
@@ -699,7 +700,6 @@ PlasmaCore.ColorScope {
                     id: userPromptComponent
                     LoginPrompt {
                         showUsernamePrompt: true
-                        hideUsername:true
 
                         font: root.kyzenFont
 
