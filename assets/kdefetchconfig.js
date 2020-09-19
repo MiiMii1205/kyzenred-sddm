@@ -124,30 +124,20 @@ function ini_unsafe(val, doUnesc) {
 }
 
 function componentToHex(c) {
-    var hex = parseInt(c).toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
+    let hex = parseInt(c).toString(16);
+    return `${hex.length == 1 ? 0 : "" }${hex}`;
 }
 
 function rgb2Hex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
 }
 
 function getKDEColor(group, color, data) {
     return rgb2Hex(...data[`Colors:${group}`][color].split(','));
 }
 
-function encodeSVG(s) {
-
-    s = s.replace(/"/g, `'`);
-    s = s.replace(/>\s{1,}</g, `><`);
-    s = s.replace(/\s{2,}/g, ` `);
-
-    return s.replace(/[\r\n%#()<>?[\\\]^`{|}]/g, encodeURIComponent);
-}
-
-
 function getFile(path, cb) {
-    var doc = new XMLHttpRequest();
+    let doc = new XMLHttpRequest();
 
     doc.onreadystatechange = () => {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -156,6 +146,7 @@ function getFile(path, cb) {
             } else {
                 cb(doc.responseText);
             }
+
         }
     }
 
@@ -178,24 +169,14 @@ function loadUserTheme() {
         if (err) {
             console.warn(err);
             console.debug(`Using default Kyzenred color scheme for ${wrapper.userName}`);
-
-            root.kyzenBackgroundColor = root.kyzenDefaultBackgroundColor;
-            root.kyzenTextColor = root.kyzenDefaultTextColor;
-            root.kyzenButtonFocusColor = root.kyzenDefaultButtonFocusColor;
-            root.kyzenButtonHoverColor = root.kyzenDefaultButtonHoverColor;
-            root.kyzenHighlightColor = root.kyzenDefaultHighlightColor;
-            root.kyzenHighlightTextColor = root.kyzenDefaultHighlightTextColor;
-            root.kyzenButtonBackgroundColor = root.kyzenDefaultButtonBackgroundColor;
-            root.kyzenViewBackgroundColor = root.kyzenDefaultViewBackgroundColor;
-            root.kyzenButtonTextColor = root.kyzenDefaultButtonTextColor;
-
+            useDefaultColorScheme();
         } else {
 
             let ini = ini_decode(data);
 
             if (ini["General"]) {
-
                 console.debug(`Using the ${ini["General"]["ColorScheme"]} color scheme for ${wrapper.userName}`);
+
                 root.kyzenBackgroundColor = getKDEColor("Window", "BackgroundNormal", ini)
                 root.kyzenTextColor = getKDEColor("Window", "ForegroundNormal", ini)
                 root.kyzenButtonFocusColor = getKDEColor("Button", "DecorationFocus", ini)
@@ -206,22 +187,27 @@ function loadUserTheme() {
                 root.kyzenHighlightTextColor = getKDEColor("Selection", "ForegroundNormal", ini)
                 root.kyzenViewBackgroundColor = getKDEColor("View", "BackgroundNormal", ini)
             } else {
-
                 console.debug(`Using default Kyzenred color scheme for ${wrapper.userName}`);
-                root.kyzenBackgroundColor = root.kyzenDefaultBackgroundColor;
-                root.kyzenTextColor = root.kyzenDefaultTextColor;
-                root.kyzenButtonFocusColor = root.kyzenDefaultButtonFocusColor;
-                root.kyzenButtonHoverColor = root.kyzenDefaultButtonHoverColor;
-                root.kyzenHighlightColor = root.kyzenDefaultHighlightColor;
-                root.kyzenHighlightTextColor = root.kyzenDefaultHighlightTextColor;
-                root.kyzenButtonBackgroundColor = root.kyzenDefaultButtonBackgroundColor;
-                root.kyzenViewBackgroundColor = root.kyzenDefaultViewBackgroundColor;
-                root.kyzenButtonTextColor = root.kyzenDefaultButtonTextColor;
+
+                useDefaultColorScheme();
             }
+
         }
 
     })
 
+}
+
+function useDefaultColorScheme() {
+    root.kyzenBackgroundColor = root.kyzenDefaultBackgroundColor;
+    root.kyzenTextColor = root.kyzenDefaultTextColor;
+    root.kyzenButtonFocusColor = root.kyzenDefaultButtonFocusColor;
+    root.kyzenButtonHoverColor = root.kyzenDefaultButtonHoverColor;
+    root.kyzenHighlightColor = root.kyzenDefaultHighlightColor;
+    root.kyzenHighlightTextColor = root.kyzenDefaultHighlightTextColor;
+    root.kyzenButtonBackgroundColor = root.kyzenDefaultButtonBackgroundColor;
+    root.kyzenViewBackgroundColor = root.kyzenDefaultViewBackgroundColor;
+    root.kyzenButtonTextColor = root.kyzenDefaultButtonTextColor;
 }
 
 function updateCurrentUserState() {
@@ -232,6 +218,7 @@ function updateCurrentUserState() {
     if (wrapper.isCurrent) {
         loadUserTheme();
     }
+
 }
 
 function findByUserName(list) {
@@ -241,6 +228,7 @@ function findByUserName(list) {
         if (bg.bgId === wrapper.userName) {
             return bg.component;
         }
+
     }
 
     return null;
@@ -248,7 +236,6 @@ function findByUserName(list) {
 }
 
 function loadUsersWallpaper() {
-
     // Let's fetch the User's settings!
 
     let username = wrapper.userName
@@ -259,32 +246,23 @@ function loadUsersWallpaper() {
         let dir = `${wrapper.homeDir}/.config/kyzen-usr-bg-config`
 
         getFile(dir, (data, err) => {
-
             let backgroundOpt = { id: userBackgroundId };
             let userBackgroundComponent = root.useDefaultWallpaper ? Qt.createComponent('../components/UserBackgroundImage.qml') : Qt.createComponent('../components/UserBackgroundColor.qml');
 
             if (err) {
-
                 console.warn(err);
                 console.debug(`Using default background for ${wrapper.userName}`);
 
-                if (root.useDefaultWallpaper) {
-                    backgroundOpt.source = root.defaultWallpaper;
-                } else {
-                    backgroundOpt.color = root.kyzenBackgroundColor;
-                }
-
+                useDefaultBackgroundOptions(backgroundOpt);
             } else {
 
                 let ini = ini_decode(data.replace(/\[[^\[\]]+\.[^\[\]]+\]/ig, (str) => str.replace(/\./g, "_")).replace(/\]\[/ig, "."));
 
                 if (ini["Containments"]) {
-
                     for (const k in ini.Containments) {
                         if (ini.Containments.hasOwnProperty(k)) {
                             const element = ini.Containments[k];
                             if (element.plugin === "org.kde.desktopcontainment") {
-
                                 let pluginName = element.wallpaperplugin.replace(/\./g, "_");
 
                                 switch (pluginName) {
@@ -304,28 +282,20 @@ function loadUsersWallpaper() {
                                         break;
 
                                     default:
-
                                         console.debug(`${pluginName} is not a supported background. Using default background for ${wrapper.userName}`);
-                                        if (root.useDefaultWallpaper) {
-                                            backgroundOpt.source = root.defaultWallpaper;
-                                        } else {
-                                            backgroundOpt.color = root.kyzenBackgroundColor;
-                                        }
+                                        useDefaultBackgroundOptions(backgroundOpt);
                                         break;
                                 }
 
                                 break;
                             }
+
                         }
+
                     }
+
                 } else {
-
-                    if (root.useDefaultWallpaper) {
-                        backgroundOpt.source = root.defaultWallpaper;
-                    } else {
-                        backgroundOpt.color = root.kyzenBackgroundColor;
-                    }
-
+                    useDefaultBackgroundOptions(backgroundOpt);
                 }
 
             }
@@ -340,6 +310,15 @@ function loadUsersWallpaper() {
 
     } else {
         wrapper.userBackground = findByUserName(userBackgroundCache);
+    }
+
+}
+
+function useDefaultBackgroundOptions(backgroundOpt) {
+    if (root.useDefaultWallpaper) {
+        backgroundOpt.source = root.defaultWallpaper;
+    } else {
+        backgroundOpt.color = root.kyzenBackgroundColor;
     }
 
 }
