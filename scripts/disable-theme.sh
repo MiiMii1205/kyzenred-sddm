@@ -2,7 +2,7 @@
 
 echo "removing ~/.config/kdeglobals permision to SDDM"
 
-setfacl -x u:sddm:r ~/.config/kdeglobals
+setfacl -x u:sddm ~/.config/kdeglobals
 
 if test -f ~/.config/autostart-scripts/kyzen-sddm-autostart.sh; then
     echo "disabling script autostart"
