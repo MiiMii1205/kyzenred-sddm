@@ -1,5 +1,5 @@
 # Kyzenred
-A full KDE theme based on gamer aesthetics and modern minimalism (Plasma look-and-feel component)
+A full KDE theme based on gamer aesthetics and modern minimalism (SDDM greeter component)
 
 ![Kyzenred Preview](https://github.com/MiiMii1205/kyzenred-sddm/blob/master/preview.png?raw=true)
 
@@ -9,6 +9,12 @@ A full KDE theme based on gamer aesthetics and modern minimalism (Plasma look-an
 
 ## Installation
 Just put this repository in `/usr/share/sddm/theme`. For the theme to work correctly you'll also need to fetch every other Kyzenred components.
+
+SDDM needs to have additional permissions to fetch your settings and your current color scheme. To enable this, just run the `/scripts/enable-theme.sh` script while connected. Each users have to explicitly run this script, otherwise the default background and color scheme will be used. 
+
+Should you ever want to revoke these permission. just run the `/scripts/disable-theme.sh` script.
+
+Please note that not every background plugins types are supported. The only supported background plugins as of yet are the picture of the day plugin, the image plugin and the color plugin.
 
 ## Configuration ##
 
