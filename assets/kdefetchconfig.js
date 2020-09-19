@@ -171,6 +171,8 @@ function getFile(path, cb) {
 
 function loadUserTheme() {
 
+    // Let's fetch the User's color scheme
+
     getFile(`${wrapper.homeDir}/.config/kdeglobals`, (data, err) => {
 
         if(err) {
