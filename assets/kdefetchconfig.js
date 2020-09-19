@@ -149,17 +149,26 @@ function encodeSVG(s) {
 function getFile(path, cb) {
     var doc = new XMLHttpRequest();
 
-    doc.open("GET", path, false);    
+    doc.onreadystatechange = function () {
+        if (doc.readyState == XMLHttpRequest.HEADERS_RECEIVED) {
+            console.log(doc.getAllResponseHeaders());
+
+        } else if (doc.readyState == XMLHttpRequest.DONE) {
+            console.log(doc.response);
+            if (doc.status != 200) {
+                cb(doc.statusText, new Error(`${doc.status} : ${doc.statusText}`) );
+            } else {
+                cb(doc.responseText);
+            }
+
+        }
+
+    }
+    
+    doc.open("GET", path);    
 
     try {
         doc.send();
-
-        if (doc.status != 200) {
-            cb(doc.statusText, doc.status);
-        } else {
-            cb(doc.responseText);
-        }
-
     } catch (error) {
         cb(doc.status, error);
     }
