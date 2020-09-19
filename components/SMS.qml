@@ -66,7 +66,10 @@ Item {
             wrapMode: Text.WordWrap
             color: root.kyzenButtonHoverColor
             text:sddm.hostName || "KYZEN"
+            font.capitalization: Font.AllUppercase
             KyzenColorFade on color {}
+
+            fontSizeMode: Text.HorizontalFit
         }
 
         PlasmaComponents.Label {

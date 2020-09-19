@@ -149,32 +149,32 @@ function encodeSVG(s) {
 function getFile(path, cb) {
     var doc = new XMLHttpRequest();
 
-    doc.onreadystatechange = () => {
-        if (doc.readyState == XMLHttpRequest.DONE) {
+    doc.open("GET", path, false);    
+
+    try {
+        doc.send();
+
+        if (doc.status != 200) {
+            cb(doc.statusText, doc.status);
+        } else {
             cb(doc.responseText);
         }
+
+    } catch (error) {
+        cb(doc.status, error);
     }
-    doc.open("GET", path);
-    doc.send();
+
+
 
 }
 
 function loadUserTheme() {
 
-    getFile(`${wrapper.homeDir}/.config/kdeglobals`, (data) => {
-        var ini = ini_decode(data);
+    getFile(`${wrapper.homeDir}/.config/kdeglobals`, (data, err) => {
 
-        if (ini["General"]) {
-            root.kyzenBackgroundColor = getKDEColor("Window", "BackgroundNormal", ini)
-            root.kyzenTextColor = getKDEColor("Window", "ForegroundNormal", ini)
-            root.kyzenButtonFocusColor = getKDEColor("Button", "DecorationFocus", ini)
-            root.kyzenButtonHoverColor = getKDEColor("Button", "DecorationHover", ini)
-            root.kyzenButtonTextColor = getKDEColor("Button", "ForegroundNormal", ini)
-            root.kyzenButtonBackgroundColor = getKDEColor("Button", "BackgroundNormal", ini)
-            root.kyzenHighlightColor = getKDEColor("Selection", "BackgroundNormal", ini)
-            root.kyzenHighlightTextColor = getKDEColor("Selection", "ForegroundNormal", ini)
-            root.kyzenViewBackgroundColor = getKDEColor("View", "BackgroundNormal", ini)
-        } else {
+        if(err) {
+            console.error(err);
+
             root.kyzenBackgroundColor = root.kyzenDefaultBackgroundColor;
             root.kyzenTextColor = root.kyzenDefaultTextColor;
             root.kyzenButtonFocusColor = root.kyzenDefaultButtonFocusColor;
@@ -184,6 +184,32 @@ function loadUserTheme() {
             root.kyzenButtonBackgroundColor = root.kyzenDefaultButtonBackgroundColor;
             root.kyzenViewBackgroundColor = root.kyzenDefaultViewBackgroundColor;
             root.kyzenButtonTextColor = root.kyzenDefaultButtonTextColor;
+
+        } else {
+
+            let ini = ini_decode(data);
+
+            if (ini["General"]) {
+                root.kyzenBackgroundColor = getKDEColor("Window", "BackgroundNormal", ini)
+                root.kyzenTextColor = getKDEColor("Window", "ForegroundNormal", ini)
+                root.kyzenButtonFocusColor = getKDEColor("Button", "DecorationFocus", ini)
+                root.kyzenButtonHoverColor = getKDEColor("Button", "DecorationHover", ini)
+                root.kyzenButtonTextColor = getKDEColor("Button", "ForegroundNormal", ini)
+                root.kyzenButtonBackgroundColor = getKDEColor("Button", "BackgroundNormal", ini)
+                root.kyzenHighlightColor = getKDEColor("Selection", "BackgroundNormal", ini)
+                root.kyzenHighlightTextColor = getKDEColor("Selection", "ForegroundNormal", ini)
+                root.kyzenViewBackgroundColor = getKDEColor("View", "BackgroundNormal", ini)
+            } else {
+                root.kyzenBackgroundColor = root.kyzenDefaultBackgroundColor;
+                root.kyzenTextColor = root.kyzenDefaultTextColor;
+                root.kyzenButtonFocusColor = root.kyzenDefaultButtonFocusColor;
+                root.kyzenButtonHoverColor = root.kyzenDefaultButtonHoverColor;
+                root.kyzenHighlightColor = root.kyzenDefaultHighlightColor;
+                root.kyzenHighlightTextColor = root.kyzenDefaultHighlightTextColor;
+                root.kyzenButtonBackgroundColor = root.kyzenDefaultButtonBackgroundColor;
+                root.kyzenViewBackgroundColor = root.kyzenDefaultViewBackgroundColor;
+                root.kyzenButtonTextColor = root.kyzenDefaultButtonTextColor;
+            }
         }
 
     })
@@ -221,59 +247,76 @@ function loadUsersWallpaper() {
     let username = wrapper.userName
     let usrRegexp=new RegExp(`${username}\\:\\d+`);
     let userBackgroundId = `background_${username}`
-    
+
     if ( !usrRegexp.test(loginBackgroundList.users) ) {
-        getFile(`${wrapper.homeDir}/.config/plasma-org.kde.plasma.desktop-appletsrc`, (data) => {
-            var ini = ini_decode(data.replace(/\[[^\[\]]+\.[^\[\]]+\]/ig, (str) => str.replace(/\./g, "_")).replace(/\]\[/ig, "."));
-       
+        let dir = `${wrapper.homeDir}/.config/kyzen-usr-bg-config`
+
+        getFile(dir, (data, err) => {
+
             let backgroundOpt = { id: userBackgroundId };
             let userBackgroundComponent = root.useDefaultWallpaper ? Qt.createComponent('../components/UserBackgroundImage.qml') : Qt.createComponent('../components/UserBackgroundColor.qml');
 
-            if (ini["Containments"]) {
-
-                for (const k in ini.Containments) {
-                    if (ini.Containments.hasOwnProperty(k)) {
-                        const element = ini.Containments[k];
-                        if (element.plugin === "org.kde.desktopcontainment") {
-
-                            let pluginName = element.wallpaperplugin.replace(/\./g, "_");
-
-                            switch (pluginName) {
-                                case "org_kde_image":
-                                case "org_kde_slideshow":
-                                    backgroundOpt.source = element.Wallpaper[pluginName].General.Image.replace("file://", '');
-                                    userBackgroundComponent = Qt.createComponent('../components/UserBackgroundImage.qml')
-                                    break;
-                                case "org_kde_potd":
-                                    backgroundOpt.source = `${wrapper.homeDir}/.cache/plasmashell/plasma_engine_potd/${element.Wallpaper[pluginName].General.Provider}`;
-                                    userBackgroundComponent = Qt.createComponent('../components/UserBackgroundImage.qml')
-                                    break;
-
-                                case "org_kde_color":
-                                    backgroundOpt.color = rgb2Hex(...element.Wallpaper.org_kde_color.General.Color.split(','));
-                                    userBackgroundComponent = Qt.createComponent('../components/UserBackgroundColor.qml');
-                                    break;
-
-                                default:
-
-                                    if(root.useDefaultWallpaper) {
-                                        backgroundOpt.source = root.defaultWallpaper;
-                                    } else {
-                                        backgroundOpt.color = root.kyzenBackgroundColor;
-                                    }
-                                    break;
-                            }
-
-                            break;
-                        }
-                    }
-                }
-            } else {
-
+            if (err) {
+                
+                console.error(err);
+                
                 if(root.useDefaultWallpaper) {
                     backgroundOpt.source = root.defaultWallpaper;
                 } else {
                     backgroundOpt.color = root.kyzenBackgroundColor;
+                }
+
+            } else {
+
+                let ini = ini_decode(data.replace(/\[[^\[\]]+\.[^\[\]]+\]/ig, (str) => str.replace(/\./g, "_")).replace(/\]\[/ig, "."));
+
+                if (ini["Containments"]) {
+
+                    for (const k in ini.Containments) {
+                        if (ini.Containments.hasOwnProperty(k)) {
+                            const element = ini.Containments[k];
+                            if (element.plugin === "org.kde.desktopcontainment") {
+    
+                                let pluginName = element.wallpaperplugin.replace(/\./g, "_");
+    
+                                switch (pluginName) {
+                                    case "org_kde_image":
+                                    case "org_kde_slideshow":
+                                        backgroundOpt.source = element.Wallpaper[pluginName].General.Image.replace("file://", '');
+                                        userBackgroundComponent = Qt.createComponent('../components/UserBackgroundImage.qml')
+                                        break;
+                                    case "org_kde_potd":
+                                        backgroundOpt.source = `${wrapper.homeDir}/.cache/plasmashell/plasma_engine_potd/${element.Wallpaper[pluginName].General.Provider}`;
+                                        userBackgroundComponent = Qt.createComponent('../components/UserBackgroundImage.qml')
+                                        break;
+    
+                                    case "org_kde_color":
+                                        backgroundOpt.color = rgb2Hex(...element.Wallpaper.org_kde_color.General.Color.split(','));
+                                        userBackgroundComponent = Qt.createComponent('../components/UserBackgroundColor.qml');
+                                        break;
+    
+                                    default:
+    
+                                        if(root.useDefaultWallpaper) {
+                                            backgroundOpt.source = root.defaultWallpaper;
+                                        } else {
+                                            backgroundOpt.color = root.kyzenBackgroundColor;
+                                        }
+                                        break;
+                                }
+    
+                                break;
+                            }
+                        }
+                    }
+                } else {
+    
+                    if(root.useDefaultWallpaper) {
+                        backgroundOpt.source = root.defaultWallpaper;
+                    } else {
+                        backgroundOpt.color = root.kyzenBackgroundColor;
+                    }
+    
                 }
 
             }
