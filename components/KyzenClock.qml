@@ -26,7 +26,6 @@ ColumnLayout {
         maximumLineCount:1
         Layout.fillWidth: true
         elide: Text.ElideRight
-        height: Math.floor(Math.max(theme.mSize(font).height, implicitHeight))
     }
 
     PlasmaComponents.Label {
@@ -43,7 +42,6 @@ ColumnLayout {
         maximumLineCount:1
         Layout.fillWidth: true
         elide: Text.ElideRight
-        height: Math.floor(Math.max(theme.mSize(font).height, implicitHeight))
     }
 
     DataSource {

@@ -41,9 +41,6 @@ Item {
         model: userModel
         font: sms_root.font
         anchors.fill: sms_root
-
-        // anchors.topMargin: login_tile.height +  notificationsLabel.height + prompts.spacing + clock.height + ((prompts.spacing) *2 ) + prompts.anchors.topMargin
-
         anchors.topMargin:  texts_layouts.height + prompts.anchors.topMargin + texts_layouts.spacing
     }
 
@@ -54,19 +51,14 @@ Item {
            margins: 7
         }
 
-        // spacing:  units.largeSpacing
-
         ColumnLayout {
             id: texts_layouts
-
             Layout.fillWidth: true
-
             spacing: prompts.spacing*2
 
             KyzenClock {
                 id:clock
                 basePointSize: fontSize * 12 / 10
-        
                 spacing: prompts.spacing
                 Layout.fillWidth: true
                 font:  sms_root.font
@@ -87,9 +79,7 @@ Item {
                 text:sddm.hostName || "KYZEN"
                 font.capitalization: Font.AllUppercase
                 KyzenColorFade on color {}
-
                 fontSizeMode: Text.HorizontalFit
-                // Layout.maximumHeight: (login_tile.fontInfo.pointSize * theme.mSize(login_tile.font).height / login_tile.font.pointSize)
                 Layout.maximumHeight: Math.floor( login_tile.fontInfo.pointSize *  64  / 64 ) 
             }
 
@@ -107,13 +97,10 @@ Item {
                 visible: notificationsLabel.text != ""
                 height: implicitHeight
                 KyzenColorFade on color {} 
- 
                 fontSizeMode: Text.HorizontalFit
-                // Layout.maximumHeight: Math.floor(notificationsLabel.fontInfo.pointSize * theme.mSize(notificationsLabel.font).height / notificationsLabel.font.pointSize)
                 Layout.maximumHeight: Math.floor(notificationsLabel.fontInfo.pointSize *  12  / 12 ) 
 
             } 
-
 
         }
 
