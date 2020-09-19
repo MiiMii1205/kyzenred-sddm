@@ -152,14 +152,14 @@ function getFile(path, cb) {
     doc.onreadystatechange = () => {
         if (doc.readyState == XMLHttpRequest.DONE) {
             if (doc.status != 200) {
-                cb(doc.statusText, new Error(`${doc.status ? `${doc.status} : ` : ""}${doc.statusText || `The file ${path} couldn't be loaded.`}`) );
+                cb(doc.statusText, new Error(`${doc.status ? `${doc.status} : ` : ""}${doc.statusText || `The file ${path} couldn't be loaded.`}`));
             } else {
                 cb(doc.responseText);
             }
         }
     }
 
-    doc.open("GET", path);    
+    doc.open("GET", path);
 
     try {
         doc.send();
@@ -175,7 +175,7 @@ function loadUserTheme() {
 
     getFile(`${wrapper.homeDir}/.config/kdeglobals`, (data, err) => {
 
-        if(err) {
+        if (err) {
             console.warn(err);
             console.debug(`Using default Kyzenred color scheme for ${wrapper.userName}`);
 
@@ -206,7 +206,7 @@ function loadUserTheme() {
                 root.kyzenHighlightTextColor = getKDEColor("Selection", "ForegroundNormal", ini)
                 root.kyzenViewBackgroundColor = getKDEColor("View", "BackgroundNormal", ini)
             } else {
-                
+
                 console.debug(`Using default Kyzenred color scheme for ${wrapper.userName}`);
                 root.kyzenBackgroundColor = root.kyzenDefaultBackgroundColor;
                 root.kyzenTextColor = root.kyzenDefaultTextColor;
@@ -225,10 +225,10 @@ function loadUserTheme() {
 }
 
 function updateCurrentUserState() {
-    if(wrapper.userBackground) {
-        wrapper.userBackground.opacity=wrapper.isCurrent ? 1 : 0;
-    } 
-    
+    if (wrapper.userBackground) {
+        wrapper.userBackground.opacity = wrapper.isCurrent ? 1 : 0;
+    }
+
     if (wrapper.isCurrent) {
         loadUserTheme();
     }
@@ -238,7 +238,7 @@ function findByUserName(list) {
 
     for (let i = 0, length = list.count; i < length; ++i) {
         const bg = list.get(i);
-        if(bg.bgId === wrapper.userName) {
+        if (bg.bgId === wrapper.userName) {
             return bg.component;
         }
     }
@@ -252,10 +252,10 @@ function loadUsersWallpaper() {
     // Let's fetch the User's settings!
 
     let username = wrapper.userName
-    let usrRegexp=new RegExp(`${username}\\:\\d+`);
+    let usrRegexp = new RegExp(`${username}\\:\\d+`);
     let userBackgroundId = `background_${username}`
 
-    if ( !usrRegexp.test(loginBackgroundList.users) ) {
+    if (!usrRegexp.test(loginBackgroundList.users)) {
         let dir = `${wrapper.homeDir}/.config/kyzen-usr-bg-config`
 
         getFile(dir, (data, err) => {
@@ -264,11 +264,11 @@ function loadUsersWallpaper() {
             let userBackgroundComponent = root.useDefaultWallpaper ? Qt.createComponent('../components/UserBackgroundImage.qml') : Qt.createComponent('../components/UserBackgroundColor.qml');
 
             if (err) {
-                
+
                 console.warn(err);
                 console.debug(`Using default background for ${wrapper.userName}`);
 
-                if(root.useDefaultWallpaper) {
+                if (root.useDefaultWallpaper) {
                     backgroundOpt.source = root.defaultWallpaper;
                 } else {
                     backgroundOpt.color = root.kyzenBackgroundColor;
@@ -284,9 +284,9 @@ function loadUsersWallpaper() {
                         if (ini.Containments.hasOwnProperty(k)) {
                             const element = ini.Containments[k];
                             if (element.plugin === "org.kde.desktopcontainment") {
-    
+
                                 let pluginName = element.wallpaperplugin.replace(/\./g, "_");
-    
+
                                 switch (pluginName) {
                                     case "org_kde_image":
                                     case "org_kde_slideshow":
@@ -297,35 +297,35 @@ function loadUsersWallpaper() {
                                         backgroundOpt.source = `${wrapper.homeDir}/.cache/plasmashell/plasma_engine_potd/${element.Wallpaper[pluginName].General.Provider}`;
                                         userBackgroundComponent = Qt.createComponent('../components/UserBackgroundImage.qml')
                                         break;
-    
+
                                     case "org_kde_color":
                                         backgroundOpt.color = rgb2Hex(...element.Wallpaper.org_kde_color.General.Color.split(','));
                                         userBackgroundComponent = Qt.createComponent('../components/UserBackgroundColor.qml');
                                         break;
-    
+
                                     default:
 
                                         console.debug(`${pluginName} is not a supported background. Using default background for ${wrapper.userName}`);
-                                        if(root.useDefaultWallpaper) {
+                                        if (root.useDefaultWallpaper) {
                                             backgroundOpt.source = root.defaultWallpaper;
                                         } else {
                                             backgroundOpt.color = root.kyzenBackgroundColor;
                                         }
                                         break;
                                 }
-    
+
                                 break;
                             }
                         }
                     }
                 } else {
-    
-                    if(root.useDefaultWallpaper) {
+
+                    if (root.useDefaultWallpaper) {
                         backgroundOpt.source = root.defaultWallpaper;
                     } else {
                         backgroundOpt.color = root.kyzenBackgroundColor;
                     }
-    
+
                 }
 
             }
@@ -333,13 +333,13 @@ function loadUsersWallpaper() {
             let background = { bgId: username, component: userBackgroundComponent.createObject(loginBackgroundList, backgroundOpt) };
             userBackgroundCache.append(background);
             wrapper.userBackground = background.component;
-            loginBackgroundList.users+=`;${username}:${wrapper.m.index}`;
+            loginBackgroundList.users += `;${username}:${wrapper.m.index}`;
 
             updateCurrentUserState()
         })
 
     } else {
         wrapper.userBackground = findByUserName(userBackgroundCache);
-    } 
+    }
 
 }
