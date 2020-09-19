@@ -149,22 +149,16 @@ function encodeSVG(s) {
 function getFile(path, cb) {
     var doc = new XMLHttpRequest();
 
-    doc.onreadystatechange = function () {
-        if (doc.readyState == XMLHttpRequest.HEADERS_RECEIVED) {
-            console.log(doc.getAllResponseHeaders());
-
-        } else if (doc.readyState == XMLHttpRequest.DONE) {
-            console.log(doc.response);
+    doc.onreadystatechange = () => {
+        if (doc.readyState == XMLHttpRequest.DONE) {
             if (doc.status != 200) {
-                cb(doc.statusText, new Error(`${doc.status} : ${doc.statusText}`) );
+                cb(doc.statusText, new Error(`${doc.status ? `${doc.status} : ` : ""}${doc.statusText || `The file ${path} couldn't be loaded.`}`) );
             } else {
                 cb(doc.responseText);
             }
-
         }
-
     }
-    
+
     doc.open("GET", path);    
 
     try {
@@ -173,8 +167,6 @@ function getFile(path, cb) {
         cb(doc.status, error);
     }
 
-
-
 }
 
 function loadUserTheme() {
@@ -182,7 +174,8 @@ function loadUserTheme() {
     getFile(`${wrapper.homeDir}/.config/kdeglobals`, (data, err) => {
 
         if(err) {
-            console.error(err);
+            console.warn(err);
+            console.debug(`Using default Kyzenred color scheme for ${wrapper.userName}`);
 
             root.kyzenBackgroundColor = root.kyzenDefaultBackgroundColor;
             root.kyzenTextColor = root.kyzenDefaultTextColor;
@@ -199,6 +192,8 @@ function loadUserTheme() {
             let ini = ini_decode(data);
 
             if (ini["General"]) {
+
+                console.debug(`Using the ${ini["General"]["ColorScheme"]} color scheme for ${wrapper.userName}`);
                 root.kyzenBackgroundColor = getKDEColor("Window", "BackgroundNormal", ini)
                 root.kyzenTextColor = getKDEColor("Window", "ForegroundNormal", ini)
                 root.kyzenButtonFocusColor = getKDEColor("Button", "DecorationFocus", ini)
@@ -209,6 +204,8 @@ function loadUserTheme() {
                 root.kyzenHighlightTextColor = getKDEColor("Selection", "ForegroundNormal", ini)
                 root.kyzenViewBackgroundColor = getKDEColor("View", "BackgroundNormal", ini)
             } else {
+                
+                console.debug(`Using default Kyzenred color scheme for ${wrapper.userName}`);
                 root.kyzenBackgroundColor = root.kyzenDefaultBackgroundColor;
                 root.kyzenTextColor = root.kyzenDefaultTextColor;
                 root.kyzenButtonFocusColor = root.kyzenDefaultButtonFocusColor;
@@ -228,7 +225,6 @@ function loadUserTheme() {
 function updateCurrentUserState() {
     if(wrapper.userBackground) {
         wrapper.userBackground.opacity=wrapper.isCurrent ? 1 : 0;
-
     } 
     
     if (wrapper.isCurrent) {
@@ -267,8 +263,9 @@ function loadUsersWallpaper() {
 
             if (err) {
                 
-                console.error(err);
-                
+                console.warn(err);
+                console.debug(`Using default background for ${wrapper.userName}`);
+
                 if(root.useDefaultWallpaper) {
                     backgroundOpt.source = root.defaultWallpaper;
                 } else {
@@ -305,7 +302,8 @@ function loadUsersWallpaper() {
                                         break;
     
                                     default:
-    
+
+                                        console.debug(`${pluginName} is not a supported background. Using default background for ${wrapper.userName}`);
                                         if(root.useDefaultWallpaper) {
                                             backgroundOpt.source = root.defaultWallpaper;
                                         } else {

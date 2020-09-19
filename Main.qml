@@ -202,14 +202,7 @@ PlasmaCore.ColorScope {
                         target: loginScreen
                         opacity: 1
                     }
-                    PropertyChanges {
-                        target: clockShadow
-                        opacity: 1
-                    }
-                    PropertyChanges {
-                        target: clock
-                        opacity: 1
-                    }
+                  
                 },
                 State {
                     name: "off"
@@ -217,14 +210,7 @@ PlasmaCore.ColorScope {
                         target: loginScreen
                         opacity: 0
                     }                    
-                    PropertyChanges {
-                        target: clockShadow
-                        opacity: 0
-                    }
-                    PropertyChanges {
-                        target: clock
-                        opacity: 0
-                    }
+                  
                 }
             ]
 
@@ -234,7 +220,7 @@ PlasmaCore.ColorScope {
                     to: "on"
                     //Note: can't use animators as they don't play well with parallelanimations
                     NumberAnimation {
-                        targets: [loginScreen, clockShadow, clock]
+                        targets: [loginScreen]
                         property: "opacity"
                         duration: units.longDuration
                         easing.type: Easing.InOutQuad
@@ -244,7 +230,7 @@ PlasmaCore.ColorScope {
                     from: "on"
                     to: "off"
                     NumberAnimation {
-                        targets: [loginScreen, clockShadow, clock]
+                        targets: [loginScreen ]
                         property: "opacity"
                         duration: 500
                         easing.type: Easing.InOutQuad
@@ -314,32 +300,6 @@ PlasmaCore.ColorScope {
 
             }
 
-            KyzenClock {
-                id:clock
-                basePointSize: font.pointSize * 48 / 10
-
-                anchors.bottom: login_container.top
-                anchors.horizontalCenter: login_container.horizontalCenter
-                width: root.width
-                font: root.kyzenFont
-                
-                visible: root.softwareRendering
-            }
-
-            DropShadow {
-                id: clockShadow
-                anchors.fill: clock
-                source: clock
-                visible: !root.softwareRendering
-                horizontalOffset: 0
-                verticalOffset: loginScreen.height * ( (clock.basePointSize * 1.333) * 8 / 64) / 1080
-                radius: 3
-                samples: 14
-                spread: 0
-                color:Qt.rgba(0, 0, 0, root.shadowOpacity)  // black matches Breeze window decoration and desktopcontainment
-                KyzenPropertyFade on opacity {}
-            }
-           
 
             Item {
                 id: login_container

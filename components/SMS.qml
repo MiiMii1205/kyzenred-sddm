@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.8
 
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.1
@@ -42,7 +42,9 @@ Item {
         font: sms_root.font
         anchors.fill: sms_root
 
-        anchors.topMargin: login_tile.height+notificationsLabel.height
+        // anchors.topMargin: login_tile.height +  notificationsLabel.height + prompts.spacing + clock.height + ((prompts.spacing) *2 ) + prompts.anchors.topMargin
+
+        anchors.topMargin:  texts_layouts.height + prompts.anchors.topMargin + texts_layouts.spacing
     }
 
     ColumnLayout {
@@ -54,38 +56,66 @@ Item {
 
         // spacing:  units.largeSpacing
 
-        PlasmaComponents.Label {
-            id: login_tile
-            font.pointSize: promptsPointHeight * ( root.kyzenFont.pointSize * 64 / 10 ) / 810
-            font.family: sms_root.font.family 
-            font.weight: Font.Black
-            Layout.maximumWidth: prompts.width
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-            color: root.kyzenButtonHoverColor
-            text:sddm.hostName || "KYZEN"
-            font.capitalization: Font.AllUppercase
-            KyzenColorFade on color {}
+        ColumnLayout {
+            id: texts_layouts
 
-            fontSizeMode: Text.HorizontalFit
+            Layout.fillWidth: true
+
+            spacing: prompts.spacing*2
+
+            KyzenClock {
+                id:clock
+                basePointSize: fontSize * 12 / 10
+        
+                spacing: prompts.spacing
+                Layout.fillWidth: true
+                font:  sms_root.font
+            }
+
+            PlasmaComponents.Label {
+                id: login_tile
+                font.pointSize: root.kyzenFont.pointSize * 64 / 10
+                font.family: sms_root.font.family 
+                font.weight: Font.Black
+                Layout.maximumWidth: prompts.width
+                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+                color: root.kyzenButtonHoverColor
+                text:sddm.hostName || "KYZEN"
+                font.capitalization: Font.AllUppercase
+                KyzenColorFade on color {}
+
+                fontSizeMode: Text.HorizontalFit
+                // Layout.maximumHeight: (login_tile.fontInfo.pointSize * theme.mSize(login_tile.font).height / login_tile.font.pointSize)
+                Layout.maximumHeight: Math.floor( login_tile.fontInfo.pointSize *  64  / 64 ) 
+            }
+
+            PlasmaComponents.Label {
+                id: notificationsLabel
+                font.pointSize: fontSize * 12 / 10
+                font.family: sms_root.font.family 
+                Layout.maximumWidth: prompts.width
+                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                color: root.kyzenButtonHoverColor
+                text: ""
+                visible: notificationsLabel.text != ""
+                height: implicitHeight
+                KyzenColorFade on color {} 
+ 
+                fontSizeMode: Text.HorizontalFit
+                // Layout.maximumHeight: Math.floor(notificationsLabel.fontInfo.pointSize * theme.mSize(notificationsLabel.font).height / notificationsLabel.font.pointSize)
+                Layout.maximumHeight: Math.floor(notificationsLabel.fontInfo.pointSize *  12  / 12 ) 
+
+            } 
+
+
         }
-
-        PlasmaComponents.Label {
-            id: notificationsLabel
-            font.pointSize: sms_root.font.pointSize + 2
-            font.family: sms_root.font.family 
-            Layout.maximumWidth: prompts.width
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-            color: root.kyzenButtonHoverColor
-            text: ""
-            visible: notificationsLabel.text != ""
-            KyzenColorFade on color {}
-        } 
 
         ColumnLayout {
             Layout.maximumHeight: implicitHeight
